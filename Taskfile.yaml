@@ -1,0 +1,85 @@
+# Taskfile.yml for the ssl_report.py script
+version: '3'
+
+env:
+  TOOL_NAME: ssl_report.py
+  TOOL_VERSION: "1.0.0"
+  VENV_NAME: venv
+  PYTHON_CMD: python3
+  TEST_CMD: 'python -m pytest -v tests/' # Default test command
+
+tasks:
+  default:
+    desc: "Run all steps"
+    alias: [all]
+    cmds:
+      - task: clean
+      - task: install
+
+  help:
+    desc: "Print help"
+    cmds:
+      - go-task --list # fedora: dnf install go-task
+
+  venv:
+    desc: "Create a virtual environment"
+    cmds:
+      - echo "Creating virtual environment..."
+      - "{{.PYTHON_CMD}} -m venv {{.VENV_NAME}}"
+
+  install:
+    desc: "Install dependencies"
+    cmds:
+      - task: venv
+      - echo "Installing dependencies..."
+      - |
+        . {{.VENV_NAME}}/bin/activate && \
+        {{.PYTHON_CMD}} -m pip install --upgrade pip && \
+        {{.PYTHON_CMD}} -m pip install --upgrade setuptools && \
+        {{.PYTHON_CMD}} -m pip install --upgrade wheel && \
+        {{.PYTHON_CMD}} -m pip install -r requirements.txt
+
+  install-dev:
+    desc: "Setting up dev environment"
+    cmds:
+      - task: venv
+      - echo "Setting up dev environment..."
+      - |
+        . {{.VENV_NAME}}/bin/activate && \
+        {{.PYTHON_CMD}} -m pip install --upgrade pip && \
+        {{.PYTHON_CMD}} -m pip install --upgrade setuptools && \
+        {{.PYTHON_CMD}} -m pip install --upgrade wheel && \
+        {{.PYTHON_CMD}} -m pip install -r requirements.txt && \
+        {{.PYTHON_CMD}} -m pip install -e .
+
+  install-global:
+    desc: "Install global"
+    cmds:
+      - |
+        echo "Installing dependencies..."
+        {{.PYTHON_CMD}} -m pip install -r requirements.txt
+
+  lint:
+    desc: "Linting the project"
+    cmds:
+      - echo "Linting..."
+      - . {{.VENV_NAME}}/bin/activate && pre-commit run --all-files
+
+  test:
+    desc: "Run tests"
+    cmds:
+      - task: lint
+      - echo "Testing..."
+      - . {{.VENV_NAME}}/bin/activate && {{.TEST_CMD}}
+
+  docker-build:
+    desc: "Build Docker image"
+    cmds:
+      - echo "Building Docker image..."
+      - docker build -t {{.TOOL_NAME}}:{{.TOOL_VERSION}} .
+
+  clean:
+    desc: "Cleaning up the project"
+    cmds:
+      - echo "Cleaning up..."
+      - rm -vrf {{.VENV_NAME}} build dist *.egg-info

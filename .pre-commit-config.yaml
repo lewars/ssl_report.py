@@ -1,0 +1,17 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+      - id: yaml-lint
+      - id: end-of-file-fixer
+      - id: trailing-whitespace
+  - repo: local
+    hooks:
+      - id: talisman-precommit
+        name: talisman
+        entry: talisman --githook pre-commit
+        language: system
+        pass_filenames: false
+        types:
+          - text
+        verbose: true
