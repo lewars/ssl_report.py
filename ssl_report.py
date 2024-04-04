@@ -19,13 +19,6 @@ API_URL = "https://api.ssllabs.com/api/v2/"
 # get environment variable for debug mode
 DEBUG = os.getenv("DEBUG", False)
 
-class SSLScanException(Exception):
-    """Exception raised for errors in the SSL scan process."""
-    def __init__(self, message: str):
-        self.message = message
-        super().__init__(self.message)
-
-
 async def check_host_evaluation_status(session: aiohttp.ClientSession, host: str) -> bool:
     """ Check the evaluation status of the host.
 
@@ -64,13 +57,13 @@ async def get_ssl_data(session: aiohttp.ClientSession, host: str) -> Union[Dict,
             if DEBUG:
                 print(response)
             if response.status != 200:
-                raise SSLScanException(f"Failed to initiate SSL scan for {host}.")
+                return {"status": "ERROR", "errors": [{"message": f"Failed to initiate SSL scan for {host}."}]}
 
     while True:
         async with session.get(f"{API_URL}analyze",
-                               params={"host": host, "all": all_data, "fromCache": from_cache, "maxAge": .25 }) as status_response:
+                               params={"host": host, "all": all_data, "fromCache": from_cache, "maxAge": 1 }) as status_response:
             if status_response.status != 200:
-                raise SSLScanException(f"Failed to retrieve SSL scan status for {host}.")
+                return {"status": "ERROR", "errors": [{"message": f"Failed to initiate SSL scan for {host}."}]}
             data = await status_response.json()
             if DEBUG:
                 print(data)
@@ -116,5 +109,5 @@ if __name__ == "__main__":
         print("Usage: ssl_report.py <host1> <host2> ... <hostN>")
         sys.exit(1)
 
-    with console.status("[bold]Analyzing hosts for SSL scan...", spinner="dots"):
+    with console.status("[bold]Analyzing hosts SSL...", spinner="dots"):
         asyncio.run(main(hosts))
