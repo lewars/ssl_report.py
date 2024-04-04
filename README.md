@@ -1,7 +1,7 @@
 # ssl_report.py
 
 ## Description
-This is a simple python script that will take a list of hostnames and prints out SSL scan reports for each hostname.
+This is a simple Python script that will take a list of hostnames and prints out SSL scan reports for each host.
 
 ## Quick Start
 ```bash
