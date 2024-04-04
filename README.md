@@ -12,7 +12,7 @@ go-task docker-build
 docker run -it -e DEBUG=1 ssl_report.py:1.0.0 www.google.com www.yahoo.com
 ```
 
-**Note:** Assuming your are using __RedHat based system__ like RHEL, Rocky Linux, or Fedora Server. If not please use the packing system for your system according.
+**Note:** Assuming your are using __RedHat based system__ like RHEL, Rocky Linux, or Fedora Server. If not, please use the packaging system for your system accordingly.
 
 ## Questions and Answers
 
