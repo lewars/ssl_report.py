@@ -1,3 +1,16 @@
 [build-system]
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
+
+[project]
+name = "ssl-report"
+version = "1.0.0"
+description = "Retrieve SSL scan reports using the SSL Labs API and generate a report"
+requires-python = ">=3.10"
+dependencies = [
+    "aiohttp==3.14.3",
+    "rich==15.0.0",
+]
+
+[project.scripts]
+ssl-report = "ssl_report:main"
